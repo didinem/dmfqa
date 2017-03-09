@@ -1,4 +1,4 @@
-package org.didinem.util.keygen;
+package org.didinem.util;
 
 import org.apache.commons.lang3.StringUtils;
 

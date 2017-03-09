@@ -1,6 +1,6 @@
 package org.didinem.web.rest;
 
-import org.didinem.DubboProperties;
+import org.didinem.sprops.DubboProperties;
 import org.didinem.analyze.Finder;
 import org.didinem.handle.CacheHandler;
 import org.springframework.beans.factory.annotation.Autowired;

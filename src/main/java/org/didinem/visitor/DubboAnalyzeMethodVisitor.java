@@ -3,7 +3,7 @@ package org.didinem.visitor;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.didinem.handle.CacheHandler;
-import org.didinem.util.keygen.RedisKeyGenerater;
+import org.didinem.util.RedisKeyGenerater;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

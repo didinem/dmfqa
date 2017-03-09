@@ -2,7 +2,7 @@ package org.didinem.visitor;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.didinem.handle.CacheHandler;
-import org.didinem.util.keygen.RedisKeyGenerater;
+import org.didinem.util.RedisKeyGenerater;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,8 @@
 package org.didinem.analyze;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.didinem.handle.CacheHandler;
-import org.didinem.util.keygen.RedisKeyGenerater;
+import org.didinem.util.RedisKeyGenerater;
 import org.objectweb.asm.Opcodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
