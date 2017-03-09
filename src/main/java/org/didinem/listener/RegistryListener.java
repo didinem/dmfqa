@@ -5,7 +5,7 @@ import com.google.common.cache.LoadingCache;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
-import org.didinem.DubboProperties;
+import org.didinem.sconf.DubboProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
