@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by didinem on 3/5/2017.
  */
-@Component
+@Component("redisHandler")
 public class RedisHandler implements CacheHandler {
 
     @Autowired
