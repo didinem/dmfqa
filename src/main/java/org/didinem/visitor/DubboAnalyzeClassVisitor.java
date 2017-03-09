@@ -6,6 +6,7 @@ import org.didinem.util.keygen.RedisKeyGenerater;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 public class DubboAnalyzeClassVisitor extends EmptyVisitor {
 
     @Autowired
+    @Qualifier("redisHandler")
     private CacheHandler cacheHandler;
 
     private static final ThreadLocal<String> classInternalNames = new ThreadLocal<>();

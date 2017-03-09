@@ -6,6 +6,7 @@ import org.didinem.handle.CacheHandler;
 import org.didinem.util.keygen.RedisKeyGenerater;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class DubboAnalyzeMethodVisitor extends EmptyVisitor {
     private static final ThreadLocal<List<String>> dependentMethodLists = new ThreadLocal<>();
 
     @Autowired
+    @Qualifier("redisHandler")
     private CacheHandler cacheHandler;
 
     public String getCurrentMethodKey() {
