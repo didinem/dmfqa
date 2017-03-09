@@ -1,22 +1,48 @@
 package org.didinem.sconf.redis;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by didinem on 3/5/2017.
  */
 @Configuration
+@PropertySource("classpath:lvtu_redis.properties")
 public class RedisConfig {
+
+    @Value("${redis.server}")
+    private String server;
+
+    @Value("${redis.port}")
+    private int port;
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     @Bean("lettuceConnectionFactory")
     public LettuceConnectionFactory getLettuceConnectionFactory() {
-        String host = "192.168.50.119";
-        int port = 6379;
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(host, port);
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(server, port);
         return lettuceConnectionFactory;
     }
 

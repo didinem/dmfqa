@@ -41,6 +41,15 @@ public class RedisKeyGenerater {
      */
     public static String generateInvokeTypeKey(String classInternalName, String methodName, String methodDescriptor) {
         String methodKey = generateMethodKey(classInternalName, methodName, methodDescriptor);
+        return generateInvokeTypeKey(methodKey);
+    }
+
+    /**
+     * 生成调用方法方式key
+     * @param methodKey        方法key
+     * @return 调用方法方式key
+     */
+    public static String generateInvokeTypeKey(String methodKey) {
         return StringUtils.joinWith(SEPERATOR, methodKey, INVOKETYPE_SUFFIX);
     }
 

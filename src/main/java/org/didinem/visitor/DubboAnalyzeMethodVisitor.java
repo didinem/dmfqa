@@ -5,40 +5,43 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.didinem.handle.CacheHandler;
 import org.didinem.util.keygen.RedisKeyGenerater;
 import org.objectweb.asm.commons.EmptyVisitor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by didinem on 3/4/2017.
  */
+@Component("dubboAnalyzeMethodVisitor")
 public class DubboAnalyzeMethodVisitor extends EmptyVisitor {
 
-    private String currentMethodKey;
+    private static final ThreadLocal<String> currentMethodKeys = new ThreadLocal<>();
 
-    private boolean isInterface;
+    private static final ThreadLocal<List<String>> dependentMethodLists = new ThreadLocal<>();
 
+    @Autowired
     private CacheHandler cacheHandler;
 
-    public DubboAnalyzeMethodVisitor(String currentMethodKey) {
-        this.currentMethodKey = currentMethodKey;
-    }
-
-    public DubboAnalyzeMethodVisitor(String currentMethodKey, boolean isInterface) {
-        this.currentMethodKey = currentMethodKey;
-        this.isInterface = isInterface;
-    }
-
-    /**
-     * 直接依赖的方法
-     */
-    private List<String> dependentMethodList = Lists.newArrayList();
-
     public String getCurrentMethodKey() {
-        return currentMethodKey;
+        return currentMethodKeys.get();
     }
 
     public void setCurrentMethodKey(String currentMethodKey) {
-        this.currentMethodKey = currentMethodKey;
+        this.currentMethodKeys.set(currentMethodKey);
+    }
+
+    public void setDependentMethodList(List<String> currentDependentMethodList) {
+        dependentMethodLists.set(currentDependentMethodList);
+    }
+
+    public List<String> getDependentMethodList() {
+        if (dependentMethodLists.get() == null) {
+            List<String> depdentMethodList = Lists.newArrayList();
+            setDependentMethodList(depdentMethodList);
+            return depdentMethodList;
+        }
+        return dependentMethodLists.get();
     }
 
     public boolean isLvmama(String methodName) {
@@ -50,7 +53,6 @@ public class DubboAnalyzeMethodVisitor extends EmptyVisitor {
     }
 
     /**
-     *
      * @param i  opcode - the opcode of the type instruction to be visited. This opcode is either INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC, INVOKEINTERFACE or INVOKEDYNAMIC.
      * @param s  the internal name of the method's owner class (see getInternalName) or Opcodes.INVOKEDYNAMIC_OWNER.
      * @param s1 the method's name.
@@ -63,12 +65,11 @@ public class DubboAnalyzeMethodVisitor extends EmptyVisitor {
 
             String dependentMethodKey = RedisKeyGenerater.generateMethodKey(s, s1, s2);
             // 去除递归调用
-            if (!dependentMethodKey.equals(currentMethodKey)) {
-                dependentMethodList.add(dependentMethodKey);
+            if (!dependentMethodKey.equals(getCurrentMethodKey())) {
+                getDependentMethodList().add(dependentMethodKey);
             }
             // 调用方式
             String opcodeKey = RedisKeyGenerater.generateInvokeTypeKey(s, s1, s2);
-            System.out.println("\t" + opcodeKey + ": " + i);
             cacheHandler.set(opcodeKey, String.valueOf(i));
         }
     }
@@ -76,10 +77,13 @@ public class DubboAnalyzeMethodVisitor extends EmptyVisitor {
 
     @Override
     public void visitEnd() {
-        String denpendentKey = RedisKeyGenerater.generateDenpendentKey(currentMethodKey);
-        if (CollectionUtils.isNotEmpty(dependentMethodList)) {
-            System.out.println("=======================================" + denpendentKey);
-            cacheHandler.push(denpendentKey, dependentMethodList);
+        String denpendentKey = RedisKeyGenerater.generateDenpendentKey(getCurrentMethodKey());
+        if (CollectionUtils.isNotEmpty(getDependentMethodList())) {
+            String[] str = new String[getDependentMethodList().size()];
+            cacheHandler.push(denpendentKey, getDependentMethodList().toArray(str));
+            // 清除前一个方法的依赖
+            dependentMethodLists.remove();
+            System.out.println("====================================================================");
         }
         super.visitEnd();
     }

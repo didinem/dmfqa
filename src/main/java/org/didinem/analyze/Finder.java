@@ -1,41 +1,34 @@
 package org.didinem.analyze;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.didinem.handle.CacheHandler;
+import org.didinem.util.keygen.RedisKeyGenerater;
 import org.objectweb.asm.Opcodes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by didinem on 3/5/2017.
  */
+@Component
 public class Finder {
 
+    @Autowired
     private CacheHandler cacheHandler;
 
-    public static void main(String[] args) {
-        String rootKey = "com/lvtu/service/api/rop/service/ship/ClientShipProductServiceImpl:getCategoryCruiseList:(Lcom/lvmama/vst/api/compship/prod/vo/CompShipProductVo;Ljava/util/Date;Z)Ljava/util/List;";
-
-        Finder find = new Finder();
-        find.findDen(rootKey, "");
-
-    }
-
-    public void findDen(String rootKey, String prefix) {
+    public void findDen(String methodKey, String prefix) {
         // 所有的直接依赖
-        if (rootKey.equals("com/lvtu/dao/ship/IShipGoodsDao:findRopShipGoodsBaseBySuppGoodsIdList:(Ljava/util/List;)Ljava/util/List;")) {
-            int a = 1;
-            int b = a;
-        }
         try {
             // 此方法调用是否是接口调用
-            String opKey = rootKey + ":OPCODE";
-            Integer opcode = Integer.valueOf(cacheHandler.get(opKey));
-            if (opcode != null && opcode == Opcodes.INVOKEINTERFACE) {
-                String[] rootkeyArray = rootKey.split(":");
-                String implementsKey = rootkeyArray[0] + ":implements";
-                List<String> implementsClassKeys = cacheHandler.getList(implementsKey);
-                System.out.println(prefix + rootKey);
+            String invokeTypeKey = RedisKeyGenerater.generateInvokeTypeKey(methodKey);
+            if (cacheHandler.isExistKey(invokeTypeKey) && isInvokeInterface(invokeTypeKey)) {
+                String[] rootkeyArray = methodKey.split(":");
+                String implementsKey = RedisKeyGenerater.generateImplementKey(rootkeyArray[0]);
+                List<Object> implementsClassKeys = cacheHandler.getList(implementsKey);
+                System.out.println(prefix + methodKey);
                 for (Object object : implementsClassKeys) {
                     if (object == null) {
                         continue;
@@ -45,24 +38,33 @@ public class Finder {
                     findDen(implementsMethodKey, prefix);
                 }
             } else {
-                String dependentKey = rootKey + ":" + "denpendent";
+                String dependentKey = RedisKeyGenerater.generateDenpendentKey(methodKey);
                 if (cacheHandler.isExistKey(dependentKey)) {
-                    List<String> directDenpendencyMethodList = cacheHandler.getList(dependentKey);
-                    System.out.println(prefix + rootKey);
+                    List<Object> directDenpendencyMethodList = cacheHandler.getList(dependentKey);
+                    System.out.println(prefix + methodKey);
                     for (Object object : directDenpendencyMethodList) {
                         if (object == null) {
                             continue;
                         }
-                        String methodKey = String.valueOf(object);
-                        findDen(methodKey, prefix + "\t");
+                        String directDenpendencyMethodKey = String.valueOf(object);
+                        findDen(directDenpendencyMethodKey, prefix + "\t");
                     }
                 } else {
-                    System.out.println(prefix + rootKey);
+                    System.out.println(prefix + methodKey);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isInvokeInterface(String invokeTypeKey) {
+        String strOpcode = cacheHandler.get(invokeTypeKey);
+        if (StringUtils.isNumeric(strOpcode)) {
+            Integer opcode = Integer.valueOf(strOpcode);
+            return opcode == Opcodes.INVOKEINTERFACE;
+        }
+        return false;
     }
 
 }

@@ -15,7 +15,7 @@ public interface CacheHandler {
 
     void push(String key, List<String> list);
 
-    List<String> getList(String key);
+    List<Object> getList(String key);
 
     boolean isExistKey(String key);
 
