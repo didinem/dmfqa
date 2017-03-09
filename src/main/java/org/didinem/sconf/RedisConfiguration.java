@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 @PropertySource("classpath:lvtu_redis.properties")
-public class RedisConfig {
+public class RedisConfiguration {
 
     @Value("${redis.server}")
     private String server;

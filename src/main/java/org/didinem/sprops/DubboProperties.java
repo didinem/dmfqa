@@ -1,4 +1,4 @@
-package org.didinem.sconf;
+package org.didinem.sprops;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
