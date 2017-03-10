@@ -1,11 +1,13 @@
 package org.didinem.web.rest;
 
-import org.didinem.sprops.DubboProperties;
+import com.google.common.cache.LoadingCache;
 import org.didinem.analyze.Finder;
 import org.didinem.handle.CacheHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by didinem on 3/5/2017.
@@ -20,7 +22,7 @@ public class TestController {
     private CacheHandler cacheHandler;
 
     @Autowired
-    private DubboProperties dubboProperties;
+    private LoadingCache<String, String> loadingCache;
 
     @RequestMapping("/test")
     public String test() {
@@ -34,6 +36,18 @@ public class TestController {
     public String test2() {
         cacheHandler.set("qwe", "aaa");
         return "success";
+    }
+
+    @RequestMapping("/test3")
+    public String test3(String interfaceName) {
+        String result = "-1";
+        String internalClassName = interfaceName.replaceAll("\\.", "\\/");
+        try {
+            result = loadingCache.get(internalClassName);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

@@ -20,7 +20,7 @@ public class RedisHandler implements CacheHandler {
             delete(key);
         }
         System.out.println(key);
-        redisTemplate.opsForValue().set(key, value);
+//        redisTemplate.opsForValue().set(key, value);
     }
 
     public String get(String key) {
@@ -32,7 +32,7 @@ public class RedisHandler implements CacheHandler {
             delete(key);
         }
         System.out.println(key);
-        redisTemplate.opsForList().rightPushAll(key, value);
+//        redisTemplate.opsForList().rightPushAll(key, value);
     }
 
     public void push(String key, List<String> list) {
@@ -40,7 +40,7 @@ public class RedisHandler implements CacheHandler {
             delete(key);
         }
         System.out.println(key);
-        redisTemplate.opsForList().rightPushAll(key, list);
+//        redisTemplate.opsForList().rightPushAll(key, list);
     }
 
 

@@ -8,12 +8,10 @@ import org.didinem.visitor.DubboAnalyzeClassVisitor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.springframework.beans.BeansException;
+import org.objectweb.asm.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.BufferedInputStream;
@@ -79,6 +77,11 @@ public class DmfqaApplicationTests {
 	public void findDen() {
 		String rootKey = "com/lvtu/service/api/rop/service/ship/ClientShipProductServiceImpl:getCategoryCruiseList:(Lcom/lvmama/vst/api/compship/prod/vo/CompShipProductVo;Ljava/util/Date;Z)Ljava/util/List;";
 		finder.findDen(rootKey, "");
+	}
+
+	@Test
+	public void asmTest() {
+		System.out.println(Type.getType("com/lvmama/tnt/api/service/mtRoute/PoiService"));
 	}
 
 }

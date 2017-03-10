@@ -22,5 +22,4 @@ public class ZooKeeperConfiguration {
         return zkClient;
     }
 
-
 }

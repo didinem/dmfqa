@@ -22,6 +22,7 @@ public class Finder {
         // 所有的直接依赖
         try {
             // 此方法调用是否是接口调用
+            // TODO 多个接口group
             String invokeTypeKey = RedisKeyGenerater.generateInvokeTypeKey(methodKey);
             if (cacheHandler.isExistKey(invokeTypeKey) && isInvokeInterface(invokeTypeKey)) {
                 String[] rootkeyArray = methodKey.split(":");
@@ -65,5 +66,7 @@ public class Finder {
         }
         return false;
     }
+
+
 
 }
